@@ -55,9 +55,7 @@ def data_preprocessing(subset_size):
     """
     # Split genre data into individual words.
     movies['keyWords'] = movies['genres'].str.replace('|', ' ')
-    # Subset of the data
-    movies_subset = movies[:subset_size]
-    return movies_subset
+    return movies[:subset_size]
 
 # !! DO NOT CHANGE THIS FUNCTION SIGNATURE !!
 # You are, however, encouraged to change its content.  
@@ -101,12 +99,10 @@ def content_model(movie_list,top_n=10):
     # Getting the indexes of the 10 most similar movies
     listings = score_series_1.append(score_series_1).append(score_series_3).sort_values(ascending = False)
 
-    # Store movie names
-    recommended_movies = []
     # Appending the names of movies
     top_50_indexes = list(listings.iloc[1:50].index)
     # Removing chosen movies
     top_indexes = np.setdiff1d(top_50_indexes,[idx_1,idx_2,idx_3])
-    for i in top_indexes[:top_n]:
-        recommended_movies.append(list(movies['title'])[i])
+    # Store movie names
+    recommended_movies = [list(movies['title'])[i] for i in top_indexes[:top_n]]
     return recommended_movies
