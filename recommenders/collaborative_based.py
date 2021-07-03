@@ -65,10 +65,10 @@ def prediction_item(item_id):
     load_df = Dataset.load_from_df(ratings_df,reader)
     a_train = load_df.build_full_trainset()
 
-    predictions = []
-    for ui in a_train.all_users():
-        predictions.append(model.predict(iid=item_id,uid=ui, verbose = False))
-    return predictions
+    return [
+        model.predict(iid=item_id, uid=ui, verbose=False)
+        for ui in a_train.all_users()
+    ]
 
 def pred_movies(movie_list):
     """Maps the given favourite movies selected within the app to corresponding
@@ -136,13 +136,9 @@ def collab_model(movie_list,top_n=10):
     score_series_1 = pd.Series(rank_1).sort_values(ascending = False)
     score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
     score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
-     # Appending the names of movies
     listings = score_series_1.append(score_series_1).append(score_series_3).sort_values(ascending = False)
-    recommended_movies = []
     # Choose top 50
     top_50_indexes = list(listings.iloc[1:50].index)
     # Removing chosen movies
     top_indexes = np.setdiff1d(top_50_indexes,[idx_1,idx_2,idx_3])
-    for i in top_indexes[:top_n]:
-        recommended_movies.append(list(movies_df['title'])[i])
-    return recommended_movies
+    return [list(movies_df['title'])[i] for i in top_indexes[:top_n]]
